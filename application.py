@@ -3,10 +3,9 @@ from flask_script import Manager
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-
 class Application(Flask):
-    def __init__(self, import_name, template_folder=None):
-        super(Application, self).__init__(import_name, template_folder=template_folder)
+    def __init__(self, import_name, template_folder=None, root_path=None):
+        super(Application, self).__init__(import_name, template_folder=template_folder, root_path=root_path)
         self.config.from_pyfile('config/base_setting.py')
         if 'ops_config' in os.environ:
             self.config.from_pyfile('config/%s_setting.py'%os.environ['ops_config'])
