@@ -20,7 +20,13 @@ var user_login_ops = {
             }
 
             $.ajax({
-                url:"/user/login"
+                url: common_ops.buildUrl("/user/login"),
+                type:"POST",
+                data:{'login_name':login_name,'login_pwd':login_pwd},
+                dataType:'json',
+                success:function(res){
+
+                }
             })
 
 
