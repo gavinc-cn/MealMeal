@@ -5,11 +5,11 @@ from common.libs.user.UserService import UserService
 
 route_user = Blueprint( 'user_page',__name__ )
 
+
 @route_user.route( "/login", methods=['GET','POST'])
 def login():
     if request.method == 'GET':
-        return render_template( "user/login.html" )
-
+        return render_template("user/login.html")
     resp = {'code':200, 'msg':'登陆成功','data':{}}
     req = request.values
     login_name = req['login_name'] if 'login_name' in req else ''
