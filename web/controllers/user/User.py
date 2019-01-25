@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint,render_template, request, jsonify
+import json
+from flask import Blueprint,render_template, request, jsonify, make_response
 from common.models.User import User
 from common.libs.user.UserService import UserService
 
@@ -35,6 +36,9 @@ def login():
         resp['code'] = -1
         resp['msg'] = '请输入正确的登录用户名和密码 -2 ~~'
         return jsonify(resp)
+
+    response = make_response(json.dumps(resp))
+    response.set_cookie("mooc_food", "%s#%s" % ("", user_info.uid))
 
     return jsonify(resp)
 

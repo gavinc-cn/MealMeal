@@ -4,6 +4,11 @@ import hashlib, base64
 class UserService:
 
     @staticmethod
+    def geneAuthCode(user_info):
+        pass
+         
+
+    @staticmethod
     def genePwd(pwd, salt):
         m = hashlib.md5()
         str = '%s-%s' %(base64.encodebytes(pwd.encode('utf-8')), salt)
