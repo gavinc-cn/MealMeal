@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import Blueprint,render_template, request, jsonify, make_response
+from flask import Blueprint, render_template, request, jsonify, make_response, redirect
 from common.models.User import User
 from common.libs.user.UserService import UserService
+from application import app
+from common.libs.UrlManager import UrlManager
 
 route_user = Blueprint( 'user_page',__name__ )
 
 
-@route_user.route( "/login", methods=['GET','POST'])
+@route_user.route( "/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("user/login.html")
-    resp = {'code':200, 'msg':'登陆成功','data':{}}
+    resp = {'code':200, 'msg':'登陆成功','data': {}}
     req = request.values
     login_name = req['login_name'] if 'login_name' in req else ''
     login_pwd = req['login_pwd'] if 'login_pwd' in req else ''
@@ -38,14 +40,24 @@ def login():
         return jsonify(resp)
 
     response = make_response(json.dumps(resp))
-    response.set_cookie("mooc_food", "%s#%s" % ("", user_info.uid))
+    response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid))
 
-    return jsonify(resp)
+    return response
 
-@route_user.route( "/edit" )
+
+@route_user.route("/edit")
 def edit():
     return render_template( "user/edit.html" )
 
-@route_user.route( "/reset-pwd" )
+
+@route_user.route("/reset-pwd")
 def resetPwd():
-    return render_template( "user/reset_pwd.html" )
+    return render_template("user/reset_pwd.html")
+
+
+@route_user.route("/logout")
+def logout():
+    response = make_response(redirect(UrlManager.buildUrl("/user/login")))
+    response.delete_cookie(app.config['AUTH_COOKIE_NAME'])
+    return response
+
