@@ -6,10 +6,10 @@ from common.libs.user.UserService import UserService
 from application import app
 from common.libs.UrlManager import UrlManager
 
-route_user = Blueprint( 'user_page',__name__ )
+route_user = Blueprint('user_page', __name__)
 
 
-@route_user.route( "/login", methods=['GET', 'POST'])
+@route_user.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("user/login.html")
@@ -47,7 +47,7 @@ def login():
 
 @route_user.route("/edit")
 def edit():
-    return render_template( "user/edit.html" )
+    return render_template("user/edit.html")
 
 
 @route_user.route("/reset-pwd")

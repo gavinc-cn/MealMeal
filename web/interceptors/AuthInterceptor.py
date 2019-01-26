@@ -10,7 +10,7 @@ import re
 @app.before_request
 def before_request():
     ignore_urls = app.config['IGNORE_URLS']
-    ignore_check_login_urls = app.config['IGNORE_URLS']
+    ignore_check_login_urls = app.config['IGNORE_CHECK_LOGIN_URLS']
     path = request.path
 
     pattern = re.compile('%s' % "|".join(ignore_check_login_urls))
@@ -18,8 +18,6 @@ def before_request():
         return
 
     user_info = check_login()
-
-    app.logger.info(user_info)
 
     pattern = re.compile('%s' % "|".join(ignore_urls))
     if pattern.match(path):
