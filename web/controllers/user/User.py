@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-from flask import Blueprint, request, jsonify, make_response, redirect
+from flask import Blueprint, request, jsonify, make_response, redirect, g
 from common.models.User import User
 from common.libs.user.UserService import UserService
 from common.libs.Helper import ops_render
-from application import app
+from application import app, db
 from common.libs.UrlManager import UrlManager
 
 route_user = Blueprint('user_page', __name__)
@@ -41,19 +41,76 @@ def login():
         return jsonify(resp)
 
     response = make_response(json.dumps(resp))
-    response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid))
+    response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid), 60*60*24*120)
 
     return response
 
 
-@route_user.route("/edit")
+@route_user.route("/edit", methods=["GET", "POST"])
 def edit():
-    return ops_render("user/edit.html")
+    if request.method == "GET":
+        return ops_render("user/edit.html")
+
+    resp = {'code':200, 'msg':'操作成功～','data':{}}
+    req = request.values
+    nickname = req['nickname'] if 'nickname' in req else ''
+    email = req['email'] if 'email' in req else ''
+
+    if nickname is None or len(nickname) < 1:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规定的姓名～～"
+        return jsonify(resp)
+
+    if email is None or len(email) < 1:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规定的邮箱～～"
+        return jsonify(resp)
+
+    user_info = g.current_user
+    user_info.nickname = nickname
+    user_info.email = email
+
+    db.session.add(user_info)
+    db.session.commit()
+    return jsonify(resp)
 
 
-@route_user.route("/reset-pwd")
+@route_user.route("/reset-pwd", methods=['GET','POST'])
 def resetPwd():
-    return ops_render("user/reset_pwd.html")
+    if request.method == 'GET':
+        return ops_render("user/reset_pwd.html")
+
+    resp = {'code': 200, 'msg': '操作成功～', 'data': {}}
+    req = request.values
+    old_password = req['old_password'] if 'old_password' in req else ''
+    new_password = req['new_password'] if 'new_password' in req else ''
+
+    if old_password is None or len(old_password) < 6:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规范的原密码～～"
+        return jsonify(resp)
+
+    if new_password is None or len(new_password) < 6:
+        resp['code'] = -1
+        resp['msg'] = "请输入符合规范的原密码～～"
+        return jsonify(resp)
+
+    if old_password == new_password:
+        resp['code'] = -1
+        resp['msg'] = "请重新输入一个吧，新密码和原密码不能相同哦～～"
+        return jsonify(resp)
+
+    user_info = g.current_user
+    user_info.login_pwd = UserService.genePwd(new_password, user_info.login_salt)
+
+    db.session.add(user_info)
+    db.session.commit()
+
+    # response = make_response(json.dumps(resp))
+    # response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid), 60*60*24*120)  # 保存120天
+    # return response
+
+    return jsonify(resp)
 
 
 @route_user.route("/logout")
