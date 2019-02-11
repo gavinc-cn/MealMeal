@@ -15,8 +15,8 @@ var user_pwd_ops = {
             var old_password = $("#old_password").val();
             var new_password = $("#new_password").val();
 
-            var email_target = $(".user_edit_wrap input[name=email]");
-            var email = email_target.val();
+//            var email_target = $(".user_edit_wrap input[name=email]");
+//            var email = email_target.val();
 
             if(!old_password){
                 common_ops.alert("请输入原始密码～～");

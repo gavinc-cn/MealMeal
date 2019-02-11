@@ -49,7 +49,7 @@ def login():
 @route_user.route("/edit", methods=["GET", "POST"])
 def edit():
     if request.method == "GET":
-        return ops_render("user/edit.html")
+        return ops_render("user/edit.html", {'current': 'edit'})
 
     resp = {'code':200, 'msg':'操作成功～','data':{}}
     req = request.values
@@ -78,7 +78,7 @@ def edit():
 @route_user.route("/reset-pwd", methods=['GET','POST'])
 def resetPwd():
     if request.method == 'GET':
-        return ops_render("user/reset_pwd.html")
+        return ops_render("user/reset_pwd.html", {'current': 'reset-pwd'})
 
     resp = {'code': 200, 'msg': '操作成功～', 'data': {}}
     req = request.values
@@ -106,11 +106,12 @@ def resetPwd():
     db.session.add(user_info)
     db.session.commit()
 
-    # response = make_response(json.dumps(resp))
-    # response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid), 60*60*24*120)  # 保存120天
-    # return response
+    # 重新设置cookie避免修改密码之后自动登出
+    response = make_response(json.dumps(resp))
+    response.set_cookie(app.config['AUTH_COOKIE_NAME'], "%s#%s" % (UserService.geneAuthCode(user_info), user_info.uid), 60*60*24*120)  # 保存120天
+    return response
 
-    return jsonify(resp)
+    # return jsonify(resp)
 
 
 @route_user.route("/logout")

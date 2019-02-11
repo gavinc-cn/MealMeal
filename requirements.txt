@@ -3,7 +3,6 @@ flask-sqlalchemy
 flask-debugtoolbar
 flask_script
 requests
-uwsgi
-mysqlclient
+# mysqlclient
 flask-sqlacodegen
-uwsgi
+# uwsgi
