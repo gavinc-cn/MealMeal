@@ -56,16 +56,18 @@
             </tr>
             </thead>
             <tbody>
+            {% if list %}
+                {% for item in list %}
             <tr>
-                <td>1</td>
-                <td>编程浪子2</td>
-                <td>11012031511</td>
-                <td>apanly@163.com</td>
+                <td>{{item.uid}}</td>
+                <td>{{item.nickname}}</td>
+                <td>{{item.mobile}}</td>
+                <td>{{item.email}}</td>
                 <td>
-                    <a href="{{ buildUrl('/account/info') }}">
+                    <a href="{{ buildUrl('/account/info') }}?id={{item.uid}}">
                         <i class="fa fa-eye fa-lg"></i>
                     </a>
-                    <a class="m-l" href="{{ buildUrl('/account/set') }}">
+                    <a class="m-l" href="{{ buildUrl('/account/set') }}?id={{item.uid}}">
                         <i class="fa fa-edit fa-lg"></i>
                     </a>
 
@@ -74,6 +76,10 @@
                     </a>
                 </td>
             </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="5">暂无数据~~</td></tr>
+            {% endif %}
             </tbody>
         </table>
 
