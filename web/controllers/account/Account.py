@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 from common.libs.Helper import ops_render, iPagination
+from common.libs.UrlManager import UrlManager
 from common.models.User import User
 from application import app, db
 
@@ -25,7 +26,7 @@ def index():
     }
 
     pages = iPagination(page_params)
-    offset = (page-1)*app.config['PAGE_SIZE ']
+    offset = (page-1)*app.config['PAGE_SIZE']
     limit = app.config['PAGE_SIZE']*page
 
     list = query.order_by(User.uid.desc()).all()[offset:limit]
@@ -36,9 +37,22 @@ def index():
 
 @route_account.route("/info")
 def info():
-    return ops_render("account/info.html")
+    resp_data = {}
+    req = request.args
+    uid = int(req.get('id', 0))
+    reback_url = UrlManager.buildUrl("/account/index")
+    if uid < 1:
+        return redirect(reback_url)
+
+    info = User.query.filter_by(uid=uid).first()
+    if not info:
+        return redirect(reback_url)
+
+    resp_data['info'] = info
+    return ops_render("account/info.html", resp_data)
 
 
-@route_account.route("/set")
+@route_account.route("/set", methods=["GET", "POST"])
 def set():
-    return ops_render("account/set.html")
+    if request.method == "GET":
+        return ops_render("account/set.html")
