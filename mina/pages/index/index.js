@@ -16,6 +16,7 @@ Page({
     wx.setNavigationBarTitle({
       title: app.globalData.shopName
     })
+    this.login()
   },
   onShow:function(){
 
@@ -37,5 +38,8 @@ Page({
         });
       }
     });
+  }
+  login:function(){
+
   }
 });

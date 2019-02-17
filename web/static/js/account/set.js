@@ -12,6 +12,7 @@ var account_set_ops = {
                 return;
             }
 
+            //从前端获取需要的值
             var nickname_target = $(".wrap_account_set input[name=nickname]");
             var nickname = nickname_target.val();
 
@@ -27,6 +28,8 @@ var account_set_ops = {
             var login_pwd_target = $(".wrap_account_set input[name=login_pwd]");
             var login_pwd = login_pwd_target.val();
 
+
+            //判断处理
             if(nickname.length < 1){
                 common_ops.tip("请输入符合规范的姓名～～", nickname_target);
                 return false;
@@ -59,7 +62,8 @@ var account_set_ops = {
                 mobile: mobile,
                 email: email,
                 login_name: login_name,
-                login_pwd: login_pwd
+                login_pwd: login_pwd,
+                id: $(".wrap_account_set input[name=id]").val()
             };
 
             $.ajax({
@@ -87,6 +91,7 @@ var account_set_ops = {
 
 };
 
+//页面打开时加载
 $(document).ready(function(){
     account_set_ops.init();
 

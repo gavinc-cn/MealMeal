@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-from application import app
-from flask import request,g,redirect
+import re
 
-from common.models.User import ( User )
-from common.libs.user.UserService import ( UserService )
-from common.libs.UrlManager import ( UrlManager )
+from flask import request, g, redirect
+
+from application import app
 from common.libs.LogService import LogService
-import  re
+from common.libs.UrlManager import (UrlManager)
+from common.libs.user.UserService import (UserService)
+from common.models.User import (User)
+
+
 @app.before_request
 def before_request():
     ignore_urls = app.config['IGNORE_URLS']
