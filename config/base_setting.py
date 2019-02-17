@@ -22,4 +22,9 @@ STATUS_MAPPING = {
     "0": "已删除"
 }
 
+MINA_APP = {
+    'appid':'wx7a5738226541893e',
+    'secretkey':'57076f85cbc036df4596714481f5c436'
+}
+
 
