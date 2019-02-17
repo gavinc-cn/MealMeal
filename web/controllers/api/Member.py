@@ -9,6 +9,8 @@ from common.libs.Helper import getCurrentDate
 
 @route_api.route("/member/login", methods=["GET", "POST"])
 def login():
+    app.logger.info("00000000000000000000000000000")
+    print(000000000000000000000000000000000)
     resp = {'code': 200, 'msg': '操作成功~', 'data': {}}
     req = request.values
     code = req['code'] if 'code' in req else ''
@@ -21,42 +23,46 @@ def login():
     r = requests.get(url)
     res = json.loads(r.text)
     openid = res['openid']
-    nickname = req['nickName'] if 'nickName' in resp else ''
-    sex = req['gender'] if 'gender' in resp else 0
-    avatar = req['avatarUrl'] if 'avatarUrl' in resp else ''
+    nickname = req['nickName'] if 'nickName' in req else ''
+    sex = req['gender'] if 'gender' in req else 0
+    avatar = req['avatarUrl'] if 'avatarUrl' in req else ''
+
+    app.logger.error(nickname)
+    app.logger.error(sex)
+    app.logger.error(avatar)
+
 
     """
         判断是否已经注册过
     """
     bind_info = OauthMemberBind.query.filter_by(openid=openid, type=1).first()
-    if bind_info:
-        member_info = Member.query.filter_by(id = bind_info.member_id).first()
-        resp['msg'] = "已经绑定"
-        resp['data'] = {'nickname': member_info.nickname}
-        return jsonify(resp)
+    if not bind_info:
+        model_member = Member()
+        model_member.nickname = nickname
+        model_member.sex = sex
+        model_member.avatar = avatar
+        model_member.salt = ''
+        model_member.updated_time = model_member.created_time = getCurrentDate()
 
-    model_member = Member()
-    model_member.nickname = nickname
-    model_member.sex = sex
-    model_member.avatar = avatar
-    model_member.salt = ''
-    model_member.updated_time = model_member.created_time = getCurrentDate()
+        print(model_member, 111111111111111111111111)
+        db.session.add(model_member)
+        db.session.commit()
 
-    db.session.add(model_member)
-    db.commit()
+        model_bind = OauthMemberBind()
+        model_bind.member_id = model_member.id
+        model_bind.type = 1
+        model_bind.openid = openid
+        model_bind.extra = ''
+        model_bind.updated_time = model_bind.created_time = getCurrentDate()
 
-    model_bind = OauthMemberBind()
-    model_bind.member_id = model_member.id
-    model_bind.type = 1
-    model_bind.openid = openid
-    model_bind.extra = ''
-    model_bind.updated_time = model_bind.created_time = getCurrentDate()
+        print(model_bind, 22222222222222222222222222222)
+        db.session.add(model_bind)
+        db.session.commit()
 
-    db.session.add(model_bind)
-    db.session.commit()
+        bind_info = model_bind
 
-    resp['data'] = {'nickname': nickname}
-
+    member_info = Member.query.filter_by(id = bind_info.member_id).first()
+    resp['data'] = {'nickname': member_info.nickname}
     return jsonify(resp)
 
 

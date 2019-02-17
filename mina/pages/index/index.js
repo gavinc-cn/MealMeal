@@ -41,28 +41,29 @@ Page({
   },
   login:function(e){
     if (!e.detail.userInfo){
-      app.alert({'content':'登陆失败，请再次点击~~'});
-      return;
+        app.alert({'content':'登陆失败，请再次点击~~'});
+        return;
     }
     var data = e.detail.userInfo;
     wx.login({
-      success:function(res){
-        if (!res.code){
-          app.alert({'content':'登陆失败，请再次点击~~'})
-          return;
-        }
-        data['code'] = res.code;
-        wx.request({
-          url: 'http://127.0.0.1:8999/api/member/login',
-          header: app.getRequestHeader(),
-          method: 'POST',
-          data: data,
-          success: function (res) {
+        success:function(res){
+            if (!res.code){
+                app.alert({'content':'登陆失败，请再次点击~~'})
+                return;
+            }
+            data['code'] = res.code;
+            console.log(data)
+            wx.request({
+                url: "http://127.0.0.1:8999/api/member/login",
+                header: app.getRequestHeader(),
+                method: 'POST',
+                data: data,
+                success: function (res) {
 
-          }
-        })
-      }
-    })
+                }
+            });
+        }
+    });
     
   }
 });
