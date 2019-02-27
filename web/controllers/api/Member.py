@@ -21,6 +21,7 @@ def login():
 
     url = "https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code".format(app.config['MINA_APP']['appid'], app.config['MINA_APP']['appkey'], code)
     r = requests.get(url)
+    app.logger.info(r.text)
     res = json.loads(r.text)
     openid = res['openid']
     nickname = req['nickName'] if 'nickName' in req else ''
